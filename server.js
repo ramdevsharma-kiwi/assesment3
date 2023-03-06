@@ -2,6 +2,7 @@ const express = require('express');
 const env = require('dotenv').config();
 require("./config/db")
 require('./models/user')
+require('./models/train')
 
 const app = express();
 const port = process.env.PORT

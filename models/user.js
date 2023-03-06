@@ -11,11 +11,15 @@ const userSchema = new mongoose.Schema({
     name:{
         type: String,
     },
-    phoneNo:{
-        type: Number,
+    password: {
+        type: String,
+        required: true
     },
-    
-    isAdmin: {
+    subscribeTrain :{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "train"
+    },
+    role: {
         type : Number,
         enum : [0,1,2],
         default: 0  // 0 is for user  //1 is for admin   //2 is for subAdmin
