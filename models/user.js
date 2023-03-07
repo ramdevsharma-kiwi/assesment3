@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
         enum : [0,1,2],
         default: 0  // 0 is for user  //1 is for admin   //2 is for subAdmin
     },
+    havePermission : {
+        type : Boolean,
+        default : false
+    }
 });
 
 const User = mongoose.model('User',userSchema);
