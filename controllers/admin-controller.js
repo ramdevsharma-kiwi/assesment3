@@ -33,7 +33,8 @@ module.exports.login = async (req, res) => {
                         const token = 'Bearer ' + jwt.sign({
                             email: existingUser.email,
                             id: existingUser._id,
-                            role: existingUser.role
+                            role: existingUser.role,
+                            havePermission: existingUser.havePermission
                         },
                             secretCode);
                         res.status(200).json({ user: existingUser, token: token })
@@ -82,9 +83,20 @@ module.exports.createSubAdmin = async (req, res) => {
 }
 
 module.exports.giveRights = async (req, res) => {
+    const id = req.params.id;
     try {
-        const response = " ok"
-        return res.status(status.OK).json(response);
+        const user1 = await UserModel.findById({ _id: id })
+        if (user1.havePermission == false) {
+            user1.havePermission = true;
+            await user1.save()
+            res.status(status.OK).json({ message: "permission given" })
+        }
+        else {
+            user1.havePermission = false
+            await user1.save()
+            res.status(status.OK).json({ message: "took back permission " })
+        }
+
     } catch (err) {
 
         return res.status(status.BAD_REQUEST).json(err);
@@ -92,9 +104,10 @@ module.exports.giveRights = async (req, res) => {
 }
 
 module.exports.deleteSubAdmin = async (req, res) => {
+    const id = req.params.id;
     try {
-        const response = " ok"
-        return res.status(status.OK).json(response);
+        await UserModel.findByIdAndRemove(id)
+        res.status(status.OK).json({message:"deleted"}) 
     } catch (err) {
 
         return res.status(status.BAD_REQUEST).json(err);

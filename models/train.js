@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 
 const TrainSchema = new mongoose.Schema({
     trainNo: {
-        type: Number
+        type: Number,
+        required : true,
+        unique: true,
     },
     trName: {
         type: String
@@ -23,6 +25,9 @@ const TrainSchema = new mongoose.Schema({
         type: String,
     },
     arrivalTime:{
+        type: String,
+    },
+    currentStation:{
         type: String,
     }
 },{

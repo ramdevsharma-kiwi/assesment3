@@ -1,8 +1,10 @@
 const status = require('../constant/httpStatusCodes')
 const validator = require("../validations/validation")
 const UserModel = require("../models/user")
+const TrainModel = require("../models/train")
 const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken")
+const mailer = require("../ndoemailor/mailer")
 const secretCode = process.env.SECRET_CODE;
 
 
@@ -29,7 +31,7 @@ module.exports.register = async (req, res) => {
                 password: hashedPassword,
             })
             return res.status(200).json({ user: result })
-        } catch (err) {
+        } catch (err) { 
 
             return res.status(status.BAD_REQUEST).json(err);
         }
@@ -64,7 +66,8 @@ module.exports.login = async (req, res) => {
                         const token = 'Bearer ' + jwt.sign({
                             email: existingUser.email,
                             id: existingUser._id,
-                            role: existingUser.role
+                            role: existingUser.role,
+                            havePermission: existingUser.havePermission
                         },
                             secretCode);
                         res.status(200).json({ user: existingUser, token: token })
@@ -82,8 +85,16 @@ module.exports.login = async (req, res) => {
 
 module.exports.subscribeTrain = async (req, res) => {
     try {
-        const response = " ok"
-        return res.status(status.OK).json(response);
+        const train_id = req.params.train_id
+        const user_id = req.userId
+        const train = await TrainModel.findById(train_id)
+        const user = await UserModel.findById(user_id) 
+        train.users.push(user_id)
+        user.subscribeTrain = train_id
+        train.save()
+        user.save()
+        mailer.subscribeEmail(user.email , train , user)
+        return res.status(status.OK).json("train successfully subscribed");
     } catch (err) {
 
         return res.status(status.BAD_REQUEST).json(err);
@@ -92,7 +103,9 @@ module.exports.subscribeTrain = async (req, res) => {
 
 module.exports.trainInfo = async (req, res) => {
     try {
-        const response = " ok"
+        const user =await UserModel.findById(req.userId)
+        const train =await TrainModel.findById(user.subscribeTrain)
+        const response = train
         return res.status(status.OK).json(response);
     } catch (err) {
 
