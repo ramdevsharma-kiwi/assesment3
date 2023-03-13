@@ -1,0 +1,314 @@
+swagger: "2.0"
+info:
+  title: Train Updater System
+  description: This is the backend app in which a user can subscribe the train and get notified when the train will be updated.
+  version: 1.0
+  contact: 
+    email: ram.sharma@kiwitech.com
+  servers:
+    -url: "http://localhost:8080"
+    -description: this is local server
+
+
+schemes: [http]
+
+securityDefinitions:
+  authorization:
+    type: apiKey
+    name: authorization
+    in: header
+    description: Requests should pass an authorization header.
+
+paths:
+  /api/user/register:
+    post:
+      summary: To register the new user
+      description: Register the user using email, name, password 
+      tags:
+      - User
+      parameters:
+      - in: body
+        name : user
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            name:
+              type: string
+            password:
+              type: string
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+  /api/user/login:
+    post:
+      summary: To login the new user
+      description: login the user using email, password 
+      tags:
+      - User
+      parameters:
+      - in: body
+        name : user
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+  /api/user/subscribe-train/{train_id}:
+    patch:
+      summary: To subscribe the train
+      description : subscribe
+      tags:
+      - User
+      security:
+        - authorization: []
+      parameters:
+        - name : train_id
+          in : path
+          required : true 
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+
+  /api/user/train-info:
+    get:
+      summary: To get the train information
+      description : It will automatically send the information of the train which is subscribed by the user.
+      tags:
+      - User
+      security:
+        - authorization: []
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+
+  /api/admin/login:
+    post:
+      summary: To login the admin
+      description: login the admin using email, password 
+      tags:
+      - admin
+      parameters:
+      - in: body
+        name : user
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+  /api/admin/create-subadmin:
+    post:
+      summary: To register the new subadmin by the admin
+      description: Register the subadmin using email, name, password and role value should be 2 for the subamdin
+      tags:
+      - admin
+      security:
+        - authorization: []
+      parameters:
+      - in: body
+        name : user
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            name:
+              type: string
+            password:
+              type: string
+            role:
+              type: integer
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+  /api/admin/delete-subadmin/{id}:
+    delete:
+      summary: to delete the subadmin
+      description: to delete the subadmin by the admin
+      tags:
+      - admin
+      security:
+        - authorization: []
+      parameters:
+        - name : id
+          in : path
+          required : true 
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+  /api/admin/permission/{id}:
+    patch:
+      summary: to give the permission to  the subadmin
+      description: To give the permission by the admin so that subadmin can do their work
+      tags:
+      - admin
+      security:
+        - authorization: []
+      parameters:
+        - name : id
+          in : path
+          required : true 
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+  /api/sub-admin/login:
+    post:
+      summary: To login the subadmin
+      description: login the subadmin using email, password 
+      tags:
+      - Sub-admin
+      parameters:
+      - in: body
+        name : user
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+  /api/sub-admin/create-train:
+    post:
+      summary: To register the new train
+      description: Register the new train by the subadmin
+      tags:
+      -  Sub-admin
+      security:
+        - authorization: []
+      parameters:
+      - in: body
+        name : Sub-admin
+        schema:
+          type: object
+          properties:
+            trainNo:
+              type: string
+            trName:
+              type: string
+            source:
+              type: string
+            destination:
+              type: string
+            departTime:
+              type: string
+            arrivalTime:
+              type: string
+            currentStation:
+              type: string
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+  /api/sub-admin/delete-train/{id}:
+    delete:
+      summary: to delete the train
+      description: to delete the train by the sub-admin
+      tags:
+      - Sub-admin
+      security:
+        - authorization: []
+      parameters:
+        - name : id
+          in : path
+          required : true 
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+  /api/sub-admin/train-info/{id}:
+    get:
+      summary: to delete the train
+      description: to delete the train by the sub-admin
+      tags:
+      - Sub-admin
+      security:
+        - authorization: []
+      parameters:
+        - name : id
+          in : path
+          required : true 
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request
+
+
+  /api/sub-admin/update-train-status/{id}:
+    patch:
+      summary: To update the train status
+      description : To update the train where it has been reached it will be done by the subadmin
+      tags:
+      - Sub-admin
+      security:
+        - authorization: []
+      parameters:
+        - name : id
+          in : path
+          required : true
+        - in : body
+          name : train
+          schema:
+            type: object
+            properties:
+              currentStation:
+                type: string 
+      responses: 
+        200:
+          description: OK
+        500:
+          description: Bad Request

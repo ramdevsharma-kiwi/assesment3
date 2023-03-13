@@ -4,6 +4,7 @@ HOST_EMAIL = process.env.HOST_EMAIL
 HOST_PASSWORD = process.env.HOST_PASSWORD
 
 const transpoter = nodemailer.createTransport({
+    // host: 'gmail',
     host: 'smtp.gmail.com',
     port: 587,
     secure: false,
